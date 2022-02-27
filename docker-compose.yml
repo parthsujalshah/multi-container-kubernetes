@@ -1,11 +1,14 @@
-version: '3'
+version: '3.7'
 
 services:
-  postgres:
-    image: 'postgres:latest'
+  db:
+    image: postgres:alpine
     environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres_password
+      - POSTGRES_DB=postgres
+    ports:
+      - '5432:5432'
   redis:
     image: 'redis:latest'
   nginx:
@@ -14,11 +17,13 @@ services:
       dockerfile: Dockerfile.dev
       context: ./nginx
     ports:
-      - '3050:80'
+      - '3051:80'
   api:
     build:
       dockerfile: Dockerfile.dev
       context: ./server
+    depends_on:
+      - db
     volumes:
       - /app/node_modules
       - ./server:/app
@@ -26,7 +31,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - PGUSER=postgres
-      - PGHOST=postgres
+      - PGHOST=db
       - PGDATABASE=postgres
       - PGPASSWORD=postgres_password
       - PGPORT=5432

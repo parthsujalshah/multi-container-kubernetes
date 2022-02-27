@@ -1,53 +1,50 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-class Fib extends Component {
-  state = {
-    seenIndexes: [],
-    values: {},
-    index: ''
-  };
+const Fib = () => {
 
-  componentDidMount() {
-    console.log("HERE");
-    this.fetchValues();
-    this.fetchIndexes();
-  }
+  const [seenIndexes, setSeenIndexes] = useState([]);
+  const [values, setValues] = useState({});
+  const [index, setIndex] = useState('');
 
-  async fetchValues() {
+  useEffect(() => {
+    console.log("useEffect");
+    fetchValues();
+    fetchIndexes();
+  }, []);
+
+  async function fetchValues() {
     const values = await axios.get('/api/values/current');
-    this.setState({ values: values.data });
+    setValues(values.data);
   }
 
-  async fetchIndexes() {
-    console.log("seenIndexes:");
+  async function fetchIndexes() {
+    console.log("fetchIndexes")
     const seenIndexes = await axios.get('/api/values/all');
-    console.log("seenIndexes:", seenIndexes);
-    this.setState({
-      seenIndexes: seenIndexes.data
-    });
+    console.log("SEEN:", seenIndexes)
+    setSeenIndexes(seenIndexes.data);
   }
 
-  handleSubmit = async event => {
+  const handleSubmit = async event => {
     event.preventDefault();
 
     await axios.post('/api/values', {
-      index: this.state.index
+      index: index
     });
-    this.setState({ index: '' });
+    setIndex('');
   };
 
-  renderSeenIndexes() {
-    return this.state.seenIndexes.map(({ number }) => number).join(', ');
+  function renderSeenIndexes() {
+    return seenIndexes.map(({ number }) => number).join(', ');
   }
 
-  renderValues() {
+  function renderValues() {
     const entries = [];
 
-    for (let key in this.state.values) {
+    for (let key in values) {
       entries.push(
         <div key={key}>
-          For index {key} I calculated {this.state.values[key]}
+          For index {key} I calculated {values[key]}
         </div>
       );
     }
@@ -55,26 +52,23 @@ class Fib extends Component {
     return entries;
   }
 
-  render() {
     return (
       <div>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <label>Enter your index:</label>
           <input
-            value={this.state.index}
-            onChange={event => this.setState({ index: event.target.value })}
+            value={index}
+            onChange={event => setIndex(event.target.value)}
           />
           <button>Submit</button>
         </form>
 
         <h3>Indexes I have seen:</h3>
-        {this.renderSeenIndexes()}
+        {renderSeenIndexes()}
 
         <h3>Calculated Values:</h3>
-        {this.renderValues()}
+        {renderValues()}
       </div>
     );
   }
-}
-
 export default Fib;
