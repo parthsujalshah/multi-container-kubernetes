@@ -8,7 +8,6 @@ const Fib = () => {
   const [index, setIndex] = useState('');
 
   useEffect(() => {
-    console.log("useEffect");
     fetchValues();
     fetchIndexes();
   }, []);
@@ -19,9 +18,7 @@ const Fib = () => {
   }
 
   async function fetchIndexes() {
-    console.log("fetchIndexes")
     const seenIndexes = await axios.get('/api/values/all');
-    console.log("SEEN:", seenIndexes)
     setSeenIndexes(seenIndexes.data);
   }
 
