@@ -60,13 +60,13 @@ app.get('/values/current', async (req, res) => {
 
 app.post('/values', async (req, res) => {
   const index = req.body.index;
+  const indexInt = parseInt(index);
 
-  if (parseInt(index) > 40) {
+  if (indexInt > 40) {
     return res.status(422).send('Index too high');
   }
-  redisClient.hset('values', index, 'Nothing yet!');
-  redisPublisher.publish('insert', index);
-  pgClient.query('INSERT INTO values(number) VALUES($1)', [index]);
+  redisPublisher.publish('insert', indexInt);
+  pgClient.query('INSERT INTO values(number) VALUES($1)', [indexInt]);
 
   res.send({ working: true });
 });
