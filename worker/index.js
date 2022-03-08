@@ -10,7 +10,6 @@ const redisClient = redis.createClient({
 const sub = redisClient.duplicate();
 
 function fib(index) {
-    console.log("in worker", index)
     if (index < 2) {
         return 1;
     }
@@ -18,12 +17,13 @@ function fib(index) {
 }
 
 sub.on('message', (channel, message) => {
-  redisClient.hmget('values', message, function(err, data) {
-    if (err) console.error(err);
-    if (data === null) {
-        redisClient.hset('values', message, parseInt(fib(parseInt(message))));
-    }
-  });
+//   redisClient.hmget('values', message, function(err, data) {
+//     if (err) console.error(err);
+//     if (data === null) {
+//         redisClient.hset('values', message, parseInt(fib(parseInt(message))));
+//     }
+//   });
+  redisClient.hset('values', message, parseInt(fib(parseInt(message))));
     redisClient.hset('values', message, fib(parseInt(message)));
 });
 
