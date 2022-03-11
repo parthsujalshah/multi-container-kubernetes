@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: client
-          image: parthsujalshah/multi_container_kubernetes-client
+          image: parthsujalshah/multi_container_kubernetes-client:v1
           ports:
             - containerPort: 3000
