@@ -14,6 +14,16 @@ function fib(index) {
 }
 
 sub.on('message', (channel, message) => {
-  redisClient.hset('values', message, fib(parseInt(message)));
+  // redisClient.hset('values', message, fib(parseInt(message)));
+  redisClient.hmget('values', message, function(err, dataArr) {
+    if (err) console.error(err);
+    const data = dataArr[0];
+    console.log(message, data);
+    if (data === null || toString(data) === toString(-1)) {
+      console.log("Here")
+      redisClient.hset('values', message, parseInt(fib(parseInt(message))));
+    }
+  });
+  
 });
 sub.subscribe('insert');
